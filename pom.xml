@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
+			<version>${latest-version}</version>
 		</dependency>
 		<!--https://hamcrest.org/JavaHamcrest/tutorial -->
 		<dependency>
@@ -84,13 +84,13 @@
 		<dependency>
 			<groupId>com.aventstack</groupId>
 			<artifactId>extentreports</artifactId>
-			<version>5.0.9</version>
+			<version>${latest-version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.testng/testng -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>7.7.1</version>
+			<version>${latest-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
