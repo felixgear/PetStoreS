@@ -108,6 +108,14 @@
 			<artifactId>jackson-databind</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/com.networknt/json-schema-validator -->
+		<dependency>
+			<groupId>com.networknt</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>${latest-version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
