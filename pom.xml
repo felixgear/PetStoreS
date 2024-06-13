@@ -20,15 +20,19 @@
 		<latest-version>LATEST</latest-version>
 	</properties>
 	<dependencies>
+		<!--
+		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
@@ -41,13 +45,14 @@
 			</exclusions>
 			<scope>test</scope>
 		</dependency>
-		<!--https://www.digitalocean.com/community/tutorials/json-simple-example-->
+		<!--
+		https://www.digitalocean.com/community/tutorials/json-simple-example-->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>${latest-version}</version>
 		</dependency>
-		<!--https://hamcrest.org/JavaHamcrest/tutorial -->
+		<!-- https://hamcrest.org/JavaHamcrest/tutorial -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -60,27 +65,27 @@
 			<artifactId>groovy-all</artifactId>
 			<version>2.4.5</version>
 		</dependency>
-		<!--https://maven.apache.org/surefire/maven-surefire-plugin/-->
+		<!-- https://maven.apache.org/surefire/maven-surefire-plugin/-->
 		<dependency>
 			<groupId>org.apache.maven.surefire</groupId>
 			<artifactId>surefire</artifactId>
 			<version>3.0.0-M5</version>
 			<type>pom</type>
 		</dependency>
-		<!--https://commons.apache.org/proper/commons-io/-->
+		<!-- https://commons.apache.org/proper/commons-io/-->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
 		</dependency>
-		<!--https://github.com/beanshell/beanshell-->
+		<!-- https://github.com/beanshell/beanshell-->
 		<dependency>
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
 			<version>2.0b4</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
-		<!--suppress VulnerableLibrariesLocal -->
+		<!-- suppress VulnerableLibrariesLocal -->
 		<dependency>
 			<groupId>com.aventstack</groupId>
 			<artifactId>extentreports</artifactId>
@@ -93,16 +98,19 @@
 			<version>${latest-version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
