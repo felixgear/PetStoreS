@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="false">
-    <test name="Test">
-        <method-selectors>
-            <method-selector>
-                <script language="groovy">
-                    <![CDATA[suiteName = System.getProperty("group");
-                 groups.containsKey(suiteName);
+	<test name="AllTest">
+		<method-selectors>
+			<method-selector>
+				<script language="beanshell">
+                    <![CDATA[
+                    def groups = System.getProperty("smoke.tests");
+                 	groups.containsKey(groups);
                  ]]>
                 </script>
-            </method-selector>
-        </method-selectors>
-        <!--
+			</method-selector>
+		</method-selectors>
+		<!--
        *********************************************************************
        Define the packages to be included(Run suite package wise.)
        *********************************************************************
