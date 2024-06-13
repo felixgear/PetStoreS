@@ -17,8 +17,8 @@
        Define the packages to be included(Run suite package wise.)
        *********************************************************************
        -->
-        <packages>
-            <package name="com.example.sandbox.*" />
-        </packages>
-    </test> <!-- Test -->
-</suite> <!-- Suite  -->
+		<packages>
+			<package name="com.felixgear.*" />
+		</packages>
+	</test>
+</suite>
