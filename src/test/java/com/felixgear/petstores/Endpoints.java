@@ -1,26 +1,30 @@
 package com.example.sandbox;
 
 public class Endpoints {
-
     static final String baseUrl = "https://petstore.swagger.io/v2";
 
-    //-------------------------pet-------------------------
-    public static final String findByStatus = "/pet/findByStatus";
-    public static final String uploadImage = "/pet/{petId}/uploadImage";
-    public static final String newPet = "/pet";
-    public static final String petById = "/pet/{petId}";
+    // Pet Endpoints
+    public static final String UPLOAD_IMAGE = "/pet/{petId}/uploadImage";
+    public static final String ADD_NEW_PET = "/pet";
+    public static final String UPDATE_PET = "/pet";
+    public static final String FIND_PETS_BY_STATUS = "/pet/findByStatus";
+    public static final String FIND_PET_BY_ID = "/pet/{petId}";
+    public static final String UPDATE_PET_WITH_FORM = "/pet/{petId}";
+    public static final String DELETE_PET = "/pet/{petId}";
 
-    //-------------------------store-------------------------
-    public static final String order = "/store/order";
-    public static final String inventory = "/store/inventory";
+    // Store Endpoints
+    public static final String GET_INVENTORY = "/store/inventory";
+    public static final String PLACE_ORDER = "/store/order";
+    public static final String FIND_PURCHASE_ORDER_BY_ID = "/store/order/{orderId}";
+    public static final String DELETE_PURCHASE_ORDER_BY_ID = "/store/order/{orderId}";
 
-    //-------------------------user-------------------------
-
-    public static final String createWithArray = "/user/createWithArray";
-    public static final String createWithList = "/user/createWithList";
-    public static final String user = "/user/{username}";
-    public static final String login = "/user/login";
-    public static final String logout = "/user/logout";
-
-
+    // User Endpoints
+    public static final String CREATE_USER_WITH_LIST = "/user/createWithList";
+    public static final String GET_USER_BY_USERNAME = "/user/{username}";
+    public static final String UPDATE_USER = "/user/{username}";
+    public static final String DELETE_USER = "/user/{username}";
+    public static final String LOGIN_USER = "/user/login";
+    public static final String LOGOUT_USER = "/user/logout";
+    public static final String CREATE_USER_WITH_ARRAY = "/user/createWithArray";
+    public static final String CREATE_USER = "/user";
 }
