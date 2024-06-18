@@ -35,5 +35,9 @@ src/test/**/build/
 ### VS Code ###
 .vscode/
 
+### Extent Report ###
+extent.html
+test-output/
+
 ### Project specific ###
 src/test/java/com/example/**
