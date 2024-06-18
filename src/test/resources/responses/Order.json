@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Order Schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The unique identifier for the order"
+    },
+    "petId": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The unique identifier for the pet associated with the order"
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The number of items ordered"
+    },
+    "shipDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date and time when the order is expected to be shipped"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["placed", "approved", "delivered"],
+      "description": "The current status of the order"
+    },
+    "complete": {
+      "type": "boolean",
+      "description": "Whether the order is complete"
+    }
+  },
+  "required": ["id", "petId", "quantity", "shipDate", "status", "complete"],
+  "additionalProperties": false
+}

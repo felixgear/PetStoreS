@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
+  <parameter name="baseUrl" value="https://petstore.swagger.io/v2"/>
+  <listeners>
+    <listener class-name="org.testng.reporters.XMLReporter"/>
+  </listeners>
+  <test thread-count="5" name="DynamicGroups(failed)">
+    <method-selectors>
+      <method-selector>
+        <script language="beanshell">
+          <![CDATA[
+       return groups.containsKey("positive") || groups.containsKey("negative");
+     ]]>
+        </script>
+      </method-selector>
+    </method-selectors>
+    <classes>
+      <class name="com.felixgear.petstores.store.StoreTests">
+        <methods>
+          <include name="testPlaceOrderSuccess"/>
+          <include name="testDeleteOrderByIdSuccess"/>
+          <include name="testGetOrderByIdSuccess"/>
+        </methods>
+      </class> <!-- com.felixgear.petstores.store.StoreTests -->
+      <class name="com.felixgear.petstores.pet.PetTests">
+        <methods>
+          <include name="testFindPetByIdAfterDeleteSuccess"/>
+          <include name="testUploadImageSuccess"/>
+          <include name="testUpdatePetSuccess"/>
+          <include name="testAddNewPetSuccess"/>
+          <include name="testUpdatePetWithFormFailure"/>
+          <include name="testFindPetByIdFailure"/>
+          <include name="testFindPetsByTagsFailure"/>
+          <include name="testDeletePetFailure"/>
+          <include name="testFindPetsByTagsSuccess"/>
+          <include name="testFindPetByIdAfterUpdateSuccess"/>
+          <include name="testDeletePetSuccess"/>
+          <include name="testFindPetsByStatusSuccess"/>
+          <include name="testUpdatePetWithFormSuccess"/>
+        </methods>
+      </class> <!-- com.felixgear.petstores.pet.PetTests -->
+    </classes>
+  </test> <!-- DynamicGroups(failed) -->
+</suite> <!-- Failed suite [Suite] -->
