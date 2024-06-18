@@ -48,10 +48,11 @@ public class PetTests extends Base {
     @Test(description = "Test for successfully adding a new pet", groups = { GroupsEndpoints.POSITIVE,
 	    GroupsEndpoints.BEFORE_DELETE, GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
     public void testAddNewPetSuccess() {
+	Pet pet = RestAssured.get("resources/forms/Pet.json").as(Pet.class);
 	petName = "Marshall";
 	int randStatus = faker.number().numberBetween(0, 2);
 	petStatus = petStatusList[randStatus];
-	Pet pet = RestAssured.get("resources/forms/Pet.json").as(Pet.class);
+	pet.setId(0);
 	pet.setName(petName);
 	pet.setStatus(petStatus);
 	Response response = postUrl(PLACE_ORDER, contentType, pet);
