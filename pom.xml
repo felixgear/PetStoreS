@@ -7,8 +7,8 @@
 
 	<groupId>com.felixgear</groupId>
 	<artifactId>petstores</artifactId>
-	<version>1.1</version>
-	<name>PetStoreS</name>
+	<version>2.0</version>
+	<name>petstores</name>
 	<description>Test project for Automation Tester Engineer position at Erste
 		bank</description>
 	<properties>
@@ -60,12 +60,6 @@
 			<artifactId>testng</artifactId>
 			<version>7.4.0</version>
 			<scope>test</scope>
-		</dependency>
-		<!-- https://github.com/beanshell/beanshell-->
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>2.0b5</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
 		<dependency>
