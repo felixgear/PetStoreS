@@ -24,6 +24,22 @@ public class Order {
     private boolean complete;
     
     // Getters and Setters
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getPetId() {
+        return petId;
+    }
+    
+    public void setPetId(int petId) {
+        this.petId = petId;
+    }
+    
     public int getQuantity() {
         return quantity;
     }
@@ -54,21 +70,5 @@ public class Order {
 
     public void setComplete(boolean complete) {
         this.complete = complete;
-    }
-
-    public int getId() {
-        return id;
-    }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getPetId() {
-        return petId;
-    }
-    
-    public void setPetId(int petId) {
-        this.petId = petId;
     }
 }
