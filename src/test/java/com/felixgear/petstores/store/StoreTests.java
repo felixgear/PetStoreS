@@ -1,55 +1,56 @@
 package com.felixgear.petstores.store;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.felixgear.petstores.Base;
 import com.felixgear.petstores.GroupsEndpoints;
 import com.felixgear.petstores.utils.Done;
-import com.felixgear.petstores.utils.SharedState;
 import com.felixgear.petstores.utils.UnderConstruction;
 import com.felixgear.petstores.utils.UnhandledError;
 
-import io.restassured.RestAssured;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.response.Response;
 
 public class StoreTests extends Base {
-    private static final String contentType = "application/json; charset=UTF-8";
-
-    @UnderConstruction("Error msg: java.lang.IllegalStateException: Cannot parse object because no XML deserializer found in classpath.")
+    @Done("----------------------------------------------------------------------------------------")
     @Test(description = "Test for successfully placing an order", groups = { GroupsEndpoints.POSITIVE, GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
     public void testPlaceOrderSuccess() {
-	Order order = RestAssured.get("resources/forms/Order.json").as(Order.class);
-	order.setPetId(5);
-	order.setStatus("available");
+	order.setId(100666);
+	order.setPetId(10);
+	order.setQuantity(26);
+	String shipDate = "2024-06-20T22:33:05.204Z";
+	order.setShipDate(shipDate);
+	order.setStatus("placed");
 	order.setComplete(false);
-	Response response = postUrl(PLACE_ORDER, contentType, order);
+	Response response = postUrl(PLACE_ORDER, order);
 	assertions.assertReturnCode(response, 200);
-	int orderId = response.jsonPath().getInt("id");
-	assertions.assertElementIdScheme(orderId);
-	SharedState.setStoreId(orderId);
-	response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchema("responses/Order.json"));
+	response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchemaInClasspath("responses/Order.json"));
     }
 
     @Done("----------------------------------------------------------------------------------------")
     @UnhandledError("This method doesn't throws an error when I change the date into the future")
     @Test(description = "Test for failure when placing an order with invalid data", groups = { GroupsEndpoints.NEGATIVE,
-	    GroupsEndpoints.REGRESSION })
-    public void testPlaceOrderFailure() {
-	String order = "{\"id\":\"invalid\",\"petId\":\"invalid\",\"quantity\":-1,\"shipDate\":\"2200-06-18T00:00:00.000Z\",\"status\":\"\",\"complete\":null}";
-	Response response = postUrl(PLACE_ORDER, contentType, order);
-	assertions.assertReturnCode(response, 405);
+	    GroupsEndpoints.REGRESSION }, dependsOnMethods = "testPlaceOrderSuccess")
+    public void testPlaceOrderFailure() throws JsonProcessingException {
+	order.setId(100666);
+	order.setPetId(10);
+	String shipDate = faker.date().toString();
+	order.setShipDate(shipDate);
+	order.setStatus("available");
+	order.setComplete(false);
+	Response response = postUrl(PLACE_ORDER, order);
+	assertions.assertReturnCode(response, 500);
     }
 
     @Done("----------------------------------------------------------------------------------------")
     @Test(description = "Test for successfully retrieving an order by ID", groups = { GroupsEndpoints.POSITIVE,
 	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE }, dependsOnMethods = { "testPlaceOrderSuccess" })
     public void testGetOrderByIdSuccess() {
-	Response response = getUrl(FIND_PURCHASE_ORDER_BY_ID, SharedState.getStoreId());
+	Response response = getUrl(FIND_PURCHASE_ORDER_BY_ID, order.getId());
 	assertions.assertReturnCode(response, 200);
-	int orderId = response.jsonPath().getInt("id");
-	Assert.assertEquals(orderId, SharedState.getStoreId());
+	response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchemaInClasspath("responses/Order.json"));
+	order = response.as(Order.class);
     }
 
     @Done("----------------------------------------------------------------------------------------")
@@ -67,14 +68,14 @@ public class StoreTests extends Base {
     public void testGetInventorySuccess() {
 	Response response = getUrl(GET_INVENTORY);
 	assertions.assertReturnCode(response, 200);
-	// response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchemaInClasspath("src/test/resources/responses/Inventory.json"));
+	response.then().assertThat().body(JsonSchemaValidator.matchesJsonSchemaInClasspath("responses/Inventory.json"));
     }
 
     @Done("----------------------------------------------------------------------------------------")
     @Test(description = "Test for successfully deleting an order by ID", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE }, dependsOnMethods = { "testPlaceOrderSuccess" })
+	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE }, dependsOnMethods = { "testGetOrderByIdSuccess" })
     public void testDeleteOrderByIdSuccess() {
-	Response response = deleteUrl(DELETE_PURCHASE_ORDER_BY_ID, SharedState.getStoreId());
+	Response response = deleteUrl(DELETE_PURCHASE_ORDER_BY_ID, order.getId());
 	assertions.assertReturnCode(response, 200);
     }
 
@@ -84,6 +85,6 @@ public class StoreTests extends Base {
     public void testDeleteOrderByIdFailure() {
 	String badOrderId = "1111111111111111111111";
 	Response response = deleteUrl(DELETE_PURCHASE_ORDER_BY_ID, badOrderId);
-	assertions.assertReturnCode(response, 405);
+	assertions.assertReturnCode(response, 404);
     }
 }

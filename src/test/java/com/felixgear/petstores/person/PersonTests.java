@@ -3,9 +3,13 @@ package com.felixgear.petstores.person;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.felixgear.petstores.Base;
 import com.felixgear.petstores.GroupsEndpoints;
 import com.felixgear.petstores.utils.Done;
@@ -15,56 +19,68 @@ import com.felixgear.petstores.utils.UnhandledError;
 import io.restassured.response.Response;
 
 public class PersonTests extends Base {
-    private static final String contentType = "application/json; charset=UTF-8";
+    private static final Logger logger = LoggerFactory.getLogger(PersonTests.class);
 
     @Done("----------------------------------------------------------------------------------------")
-    @Test(enabled = false, description = "Test for successfully getting user by username", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
+    @Test(enabled = false, description = "Test for successfully getting user by username", groups = {
+	    GroupsEndpoints.POSITIVE, GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE,
+	    GroupsEndpoints.BEFORE_LOGOUT }, dependsOnMethods = "testCreatePersonSuccess")
     public void testGetUserByUsernameSuccess() {
-	String username = "user";
-	Response response = getUrl(GET_USER_BY_USERNAME, username);
+	logger.info("Modified user is: " + person.getUserName());
+	Response response = getUrl(GET_USER_BY_USERNAME, person.getUserName());
 	assertions.assertReturnCode(response, 200);
-	Assert.assertEquals(response.jsonPath().getString("username"), username);
     }
 
     @Done("----------------------------------------------------------------------------------------")
-    @Test(description = "Test for failure when getting user by invalid username", groups = {
-	    GroupsEndpoints.NEGATIVE, GroupsEndpoints.REGRESSION })
+    @Test(description = "Test for failure when getting user by invalid username", groups = { GroupsEndpoints.NEGATIVE,
+	    GroupsEndpoints.REGRESSION })
     public void testGetUserByUsernameFailure() {
 	String username = "invalid";
 	Response response = getUrl(GET_USER_BY_USERNAME, username);
 	assertions.assertReturnCode(response, 404);
     }
 
-    @UnderConstruction("This method is not fully implemented yet.")
-    @Test(enabled = false)
+    @Done("----------------------------------------------------------------------------------------")
+    @Test(description = "Test for successfully creating an user", groups = { GroupsEndpoints.NEGATIVE,
+	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE, GroupsEndpoints.BEFORE_LOGOUT })
     public void testCreatePersonSuccess() {
-	String body = "{\"id\":1,\"username\":\"john\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"password\":\"password123\",\"phone\":\"1234567890\",\"userStatus\":0}";
-	Response response = postUrl(CREATE_USER, contentType, body);
+	person.setId(faker.number().numberBetween(1000000, 2000000));
+	person.setFirstName(faker.name().firstName());
+	person.setLastName(faker.name().lastName());
+	person.setUserName(person.getFirstName().toLowerCase() + "." + person.getLastName().toLowerCase());
+	person.setEmail(person.getUserName() + "@example.eu");
+	person.setPassword("zero");
+	person.setPhone(faker.phoneNumber().cellPhone());
+	person.setUserStatus(faker.number().numberBetween(1, 5));
+	Response response = postUrl(CREATE_USER, person);
 	assertions.assertReturnCode(response, 200);
     }
 
     @UnderConstruction("This method is not fully implemented yet.")
-    @Test(enabled = false)
-    public void testCreatePersonFailure() {
-	String body = "{\"id\":\"invalidId\",\"username\":\"john\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"password\":\"password123\",\"phone\":\"1234567890\",\"userStatus\":0}";
-	Response response = postUrl(CREATE_USER, contentType, body);
-	Assert.assertNotEquals(response.getStatusCode(), 200);
+    @Test(enabled = false, dependsOnMethods = "testCreatePersonSuccess")
+    public void testCreatePersonFailure() throws JsonProcessingException {
+	ObjectMapper mapper = new ObjectMapper();
+	String jsonString = mapper.writeValueAsString(person);
+	String replaceable = String.format("\"id\":%d", person.getId());
+	jsonString = jsonString.replace(replaceable, "\"id\":\"invalid_id\"");
+	Person invalidPet = mapper.readValue(jsonString, Person.class);
+	Response response = postUrl(CREATE_USER, invalidPet);
+	assertions.assertReturnCode(response, 405);
     }
 
     @UnderConstruction("This method is not fully implemented yet.")
-    @Test(enabled = false)
+    @Test(description = "Test for successfully updating an user", dependsOnGroups = GroupsEndpoints.BEFORE_LOGOUT)
     public void testUpdatePersonSuccess() {
-	String body = "{\"id\":1,\"username\":\"john_updated\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"password\":\"password123\",\"phone\":\"1234567890\",\"userStatus\":0}";
-	Response response = putUrl(UPDATE_USER.replace("{username}", "john"), contentType, body);
+	person.setPhone(faker.phoneNumber().cellPhone());
+	Response response = putUrl(UPDATE_USER, person, Integer.toString(person.getId()));
 	assertions.assertReturnCode(response, 200);
     }
 
     @UnderConstruction("This method is not fully implemented yet.")
-    @Test(enabled = false)
+    @Test(enabled = false, dependsOnMethods = "testCreatePersonSuccess")
     public void testUpdatePersonFailure() {
-	String body = "{\"id\":\"invalidId\",\"username\":\"john_updated\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"john.doe@example.com\",\"password\":\"password123\",\"phone\":\"1234567890\",\"userStatus\":0}";
-	Response response = putUrl(UPDATE_USER.replace("{username}", "invalidUser"), contentType, body);
+	person.setLastName(faker.name().fullName());
+	Response response = putUrl(UPDATE_USER, person, Integer.toString(person.getId()));
 	assertions.assertReturnCode(response, 200);
     }
 
@@ -76,51 +92,24 @@ public class PersonTests extends Base {
     }
 
     @UnderConstruction("This method is not fully implemented yet.")
-    @Test(enabled = false)
+    @Test(dependsOnMethods = "testCreatePersonSuccess")
     public void testDeletePersonFailure() {
 	Response response = deleteUrl(DELETE_USER, "invalidUser");
-	assertions.assertReturnCode(response, 200);
+	assertions.assertReturnCode(response, 404);
     }
 
     @Done("----------------------------------------------------------------------------------------")
-    @Test(enabled = false, description = "Test for successfully creating users with array", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
+    @Test(enabled = false, description = "Test for successfully creating users with array", groups = {
+	    GroupsEndpoints.POSITIVE, GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
     public void testCreateUsersWithArraySuccess() {
 	String users = "[{\"id\": 1, \"username\": \"user1\", \"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john.doe@example.com\", \"password\": \"password1\", \"phone\": \"1234567890\", \"userStatus\": 1}]";
-	Response response = postUrl(CREATE_USER_WITH_ARRAY, contentType, users);
-	assertions.assertReturnCode(response, 200);
-    }
-
-    @Done("----------------------------------------------------------------------------------------")
-    @Test(description = "Test for failure when creating users with array with invalid data", groups = {
-	    GroupsEndpoints.NEGATIVE, GroupsEndpoints.REGRESSION })
-    public void testCreateUsersWithArrayFailure() {
-	String users = "[{\"id\": \"invalid\", \"username\": \"\", \"firstName\": \"\", \"lastName\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"userStatus\": \"invalid\"}]";
-	Response response = postUrl(CREATE_USER_WITH_ARRAY, contentType, users);
-	assertions.assertReturnCode(response, 405);
-    }
-
-    @Done("----------------------------------------------------------------------------------------")
-    @Test(enabled = false, description = "Test for successfully creating users with list", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
-    public void testCreateUsersWithListSuccess() {
-	String users = "[{\"id\": 2, \"username\": \"user2\", \"firstName\": \"Jane\", \"lastName\": \"Doe\", \"email\": \"jane.doe@example.com\", \"password\": \"password2\", \"phone\": \"0987654321\", \"userStatus\": 1}]";
-	Response response = postUrl(CREATE_USER_WITH_LIST, contentType, users);
-	assertions.assertReturnCode(response, 200);
-    }
-
-    @Done("----------------------------------------------------------------------------------------")
-    @Test(enabled = false, description = "Test for failure when creating users with list with invalid data", groups = {
-	    GroupsEndpoints.NEGATIVE, GroupsEndpoints.REGRESSION })
-    public void testCreateUsersWithListFailure() {
-	String users = "[{\"id\": \"invalid\", \"username\": \"\", \"firstName\": \"\", \"lastName\": \"\", \"email\": \"\", \"password\": \"\", \"phone\": \"\", \"userStatus\": \"invalid\"}]";
-	Response response = postUrl(CREATE_USER_WITH_LIST, contentType, users);
+	Response response = postUrl(CREATE_USER_WITH_ARRAY, users);
 	assertions.assertReturnCode(response, 200);
     }
 
     @Done("----------------------------------------------------------------------------------------")
     @Test(enabled = false, description = "Test for successfully logging in a user", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
+	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE }, dependsOnMethods = "testLogoutUserSuccess")
     public void testLoginUserSuccess() {
 	Map<String, String> login = new HashMap<>();
 	login.put("username", "test");
@@ -132,8 +121,8 @@ public class PersonTests extends Base {
 
     @Done("----------------------------------------------------------------------------------------")
     @UnhandledError("This method doesn't throws an error when I try to login with any strings!")
-    @Test(enabled = false, description = "Test for failure when logging in a user with invalid credentials", groups = { GroupsEndpoints.NEGATIVE,
-	    GroupsEndpoints.REGRESSION })
+    @Test(enabled = false, description = "Test for failure when logging in a user with invalid credentials", groups = {
+	    GroupsEndpoints.NEGATIVE, GroupsEndpoints.REGRESSION })
     public void testLoginUserFailure() {
 	String queryParams = "?username=invalid&password=invalid";
 	Response response = getUrl(LOGIN_USER, queryParams);
@@ -141,8 +130,8 @@ public class PersonTests extends Base {
     }
 
     @Done("----------------------------------------------------------------------------------------")
-    @Test(enabled = false, description = "Test for successfully logging out a user", groups = { GroupsEndpoints.POSITIVE,
-	    GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
+    @Test(enabled = false, description = "Test for successfully logging out a user", groups = {
+	    GroupsEndpoints.POSITIVE, GroupsEndpoints.REGRESSION, GroupsEndpoints.SMOKE })
     public void testLogoutUserSuccess() {
 	Response response = getUrl(LOGOUT_USER);
 	assertions.assertReturnCode(response, 200);

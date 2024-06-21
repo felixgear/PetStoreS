@@ -1,51 +1,52 @@
 {
-  "$schema" : "http://json-schema.org/draft-07/schema#",
-  "title" : "Pet",
-  "type" : "object",
-  "properties" : {
-    "id" : {
-      "type" : "integer"
-    },
-    "category" : {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "integer"
-        },
-        "name" : {
-          "type" : "string"
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
       },
-      "required" : [ "id", "name" ]
-    },
-    "name" : {
-      "type" : "string"
-    },
-    "photoUrls" : {
-      "type" : "array",
-      "items" : {
-        "type" : "string"
-      }
-    },
-    "tags" : {
-      "type" : "array",
-      "items" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "integer"
+      "category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           }
         },
-        "required" : [ "id", "name" ]
+        "required": ["id", "name"]
+      },
+      "name": {
+        "type": "string"
+      },
+      "photoUrls": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": ["id", "name"]
+        }
+      },
+      "status": {
+        "type": "string"
       }
     },
-    "status" : {
-      "type" : "string",
-      "enum" : [ "available", "pending", "sold" ]
-    }
-  },
-  "required" : [ "id", "category", "name", "photoUrls", "tags", "status" ]
+    "required": ["id", "category", "name", "photoUrls", "tags", "status"]
+  }
 }

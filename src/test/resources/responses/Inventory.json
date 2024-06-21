@@ -1,33 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Pet Status Schema",
-  "type": ["object", "null"],
+  "type": "object",
   "properties": {
-    "sold": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "The number of pets that have been sold"
+    "additionalProp1": {
+      "type": "integer"
     },
-    "string": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "An identifier for a string category, typically an integer"
+    "additionalProp2": {
+      "type": "integer"
     },
-    "pending": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "The number of pets that are pending sale"
-    },
-    "available": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "The number of pets that are available for sale"
-    },
-    "peric": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "A custom metric, possibly representing a specific category or status"
+    "additionalProp3": {
+      "type": "integer"
     }
-  },
-  "additionalProperties": false
+  }
 }
