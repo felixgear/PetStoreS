@@ -3,21 +3,14 @@
 	<parameter name="baseUrl"
 		value="https://petstore.swagger.io/v2" />
 	<listeners>
+		<listener class-name="com.felixgear.petstores.utils.DynamicGroupSelector" />
 		<listener class-name="org.testng.reporters.XMLReporter" />
 	</listeners>
 	<test name="DynamicGroups">
-		<method-selectors>
-			<method-selector>
-				<script language="beanshell"><![CDATA[
-       				return groups.containsKey("positive") || groups.containsKey("negative");
-     			]]></script>
-			</method-selector>
-		</method-selectors>
-
 		<packages>
 			<package name="com.felixgear.petstores.pet" />
-			<package name="com.felixgear.petstores.store" />
 			<package name="com.felixgear.petstores.person" />
+			<package name="com.felixgear.petstores.store" />
 		</packages>
 	</test>
 </suite>
