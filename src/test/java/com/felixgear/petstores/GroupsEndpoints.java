@@ -33,6 +33,7 @@ public class GroupsEndpoints {
     public static final String POSITIVE = "positive";
     public static final String NEGATIVE = "negative";
     public static final String BEFORE_DELETE = "before_delete";
+    public static final String BEFORE_LOGOUT = "before_logout";
     public static final String REGRESSION = "regression";
     public static final String SMOKE = "smoke";
 }
