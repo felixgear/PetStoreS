@@ -21,24 +21,36 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+import com.felixgear.petstores.person.Person;
+import com.felixgear.petstores.pet.Pet;
+import com.felixgear.petstores.store.Order;
 import com.felixgear.petstores.utils.Assertions;
+import com.github.javafaker.Faker;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class Base extends CommonFunctions {
     private static final Logger logger = LoggerFactory.getLogger(Base.class);
-
+    
     private static String token;
+    protected static Faker faker = new Faker();
+    protected static Person person = new Person();
+    protected static Pet pet = new Pet();
+    protected static Order order = new Order();
     protected Assertions assertions = new Assertions();
     protected ExtentReports extent;
     protected ExtentTest test;
     protected static final Integer WRONG_ID = -10;
-
+    
     @Parameters("baseUrl")
-    @BeforeSuite
-    public void loginHelper(@Optional("https://petstore.swagger.io/v2") String baseUrl) {
+    @BeforeSuite(alwaysRun = true)
+    public void initEnvironment(@Optional("https://petstore.swagger.io/v2") String baseUrl) {
 	RestAssured.baseURI = baseUrl;
+    }
+    
+    @BeforeSuite(alwaysRun = true, dependsOnMethods = "initEnvironment")
+    public void loginHelper() {
 	Map<String, String> login = new HashMap<>();
 	login.put("username", "test");
 	login.put("password", "abc123");
@@ -54,7 +66,7 @@ public class Base extends CommonFunctions {
 	}
     }
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void setup(ITestContext context) {
 	ExtentSparkReporter htmlReporter = new ExtentSparkReporter("extent.html");
 	htmlReporter.config().setDocumentTitle("Automation Report");
@@ -72,21 +84,21 @@ public class Base extends CommonFunctions {
 	String[] groups = context.getIncludedGroups();
 	for (String group : groups) {
 	    if (group.equalsIgnoreCase("regression")) {
-		System.out.println("Running regression tests...");
+		logger.info("Running regression tests...");
 	    } else if (group.equalsIgnoreCase("smoke")) {
-		System.out.println("Running smoke tests...");
+		logger.info("Running smoke tests...");
 	    }
 	}
     }
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void register(ITestContext context, Method method) {
 	test = extent.createTest(method.getName());
-	System.out.println("Starting test: " + method.getName());
+	logger.info("Starting test: " + method.getName());
 
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void logTestResults(ITestResult result) {
 	if (result.getStatus() == ITestResult.FAILURE) {
 	    test.fail(result.getThrowable());
@@ -96,25 +108,25 @@ public class Base extends CommonFunctions {
 	    test.skip(result.getThrowable());
 	}
 	extent.flush();
-	System.out.println("Finished test: " + result.getMethod().getMethodName());
+	logger.info("Finished test: " + result.getMethod().getMethodName());
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void teardown() {
 	if (extent != null) {
 	    extent.flush();
 	}
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void logout() {
 	Response response = RestAssured.given().header("Authorization", "Bearer " + token).accept("application/json")
 		.get("https://petstore.swagger.io/v2/user/logout");
 
 	if (response.getStatusCode() == 200) {
-	    System.out.println("Logout successful");
+	    logger.info("Logout successful");
 	} else {
-	    System.out.println("Logout failed: " + response.getStatusLine());
+	    logger.info("Logout failed: " + response.getStatusLine());
 	}
     }
 }
